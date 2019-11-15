@@ -114,7 +114,7 @@
 <td>支持平台</td>
 <td>Android/iOS/Web</td>
 <td>Android/iOS</td>
-<td>Android/iOS、Web</td>
+<td>Android/iOS/Web</td>
 <td>Android/iOS</td>
 </tr>
 <tr>
@@ -231,41 +231,41 @@
 <h2 id="Flutter-视图树结构"><a href="#Flutter-视图树结构" class="headerlink" title="Flutter 视图树结构"></a>Flutter 视图树结构</h2><p>Flutter 的视图结构的抽象分为三部分：Widget, Element, RenderObject</p>
 <p><img src="/2019/08/25/Flutter-UI-Develop/20191115_03.png" alt></p>
 <p>Widget：Widget 里面存储了一个视图的配置信息，可以高效的创建（build）和销毁<br>Element：是分离 WidgetTree 和真正的渲染对象的中间层， WidgetTree 用来描述对应的Element 属性<br>RenderObject：来执行 Diff， Hit Test 布局、绘制</p>
-<h2 id="树的操作"><a href="#树的操作" class="headerlink" title="树的操作"></a>树的操作</h2><h3 id="创建树"><a href="#创建树" class="headerlink" title="创建树"></a>创建树</h3><p><img src="/2019/08/25/Flutter-UI-Develop/20191115_04.png" alt></p>
+<h2 id="视图树树的操作"><a href="#视图树树的操作" class="headerlink" title="视图树树的操作"></a>视图树树的操作</h2><h3 id="创建树"><a href="#创建树" class="headerlink" title="创建树"></a>创建树</h3><p><img src="/2019/08/25/Flutter-UI-Develop/20191115_04.png" alt></p>
 <p>创建树的过程：创建widget树 -&gt; 调用runApp(rootWidget)，将rootWidget传给rootElement,做为rootElement的子节点，生成Element树，由Element树生成Render树</p>
 <p>Widget：存放渲染内容、视图布局信息，widget的属性最好都是immutable<br>Element：存放上下文，通过Element遍历视图树，Element同时持有Widget和RenderObject<br>RenderObject：根据Widget的布局属性进行layout，paint Widget传人的内容</p>
 <h3 id="更新树"><a href="#更新树" class="headerlink" title="更新树"></a>更新树</h3><p>widget只是一个配置数据结构，创建是非常轻量的，加上flutter团队对widget的创建/销毁做了优化，不用担心整个widget树重新创建所带来的性能问题，但是renderobject就不一样了，renderobject涉及到layout、paint等复杂操作，是一个真正渲染的view，整个view 树重新创建开销就比较大，所以答案是否定的。</p>
 <h3 id="树的更新规则"><a href="#树的更新规则" class="headerlink" title="树的更新规则"></a>树的更新规则</h3><ul>
-<li>找到widget对应的element节点，设置element为dirty，触发drawframe, drawframe会调用element的performRebuild()进行树重建</li>
-<li>widget.build() == null, deactive element.child,删除子树，流程结束</li>
-<li>element.child.widget == NULL, mount 的新子树，流程结束</li>
-<li>element.child.widget == widget.build() 无需重建，否则进入流程5</li>
-<li>Widget.canUpdate(element.child.widget, newWidget) == true，更新child的slot，element.child.update(newWidget)(如果child还有子节点，则递归上面的流程进行子树更新),流程结束，否则转6</li>
-<li>Widget.canUpdate(element.child.widget, newWidget) ！= true（widget的classtype 或者 key 不相等），deactivew element.child，mount 新子树</li>
+<li>找到widget对应的element节点，设置element为dirty，触发drawframe, drawframe会调用element的<code>performRebuild()</code>进行树重建</li>
+<li><code>widget.build() == null, deactive element.child</code> 删除子树，流程结束</li>
+<li><code>element.child.widget == NULL, mount</code> 的新子树，流程结束</li>
+<li><code>element.child.widget == widget.build()</code> 无需重建，否则进入流程5</li>
+<li><code>Widget.canUpdate(element.child.widget, newWidget) == true</code> 更新child的slot，element.child.update(newWidget)(如果child还有子节点，则递归上面的流程进行子树更新),流程结束，否则转6</li>
+<li><code>Widget.canUpdate(element.child.widget, newWidget) ！= true</code>（widget的classtype 或者 key 不相等），deactivew element.child，mount 新子树</li>
 </ul>
 <blockquote>
-<p>注意：<br>element.child.widget == widget.build(),不会触发子树的update，当触发update的时候，如果没有生效，要注意widget是否使用旧widget，没有new widget，导致update流程走到该widget就停止了<br>子树的深度变化，会引起子树重建，如果子树是一个复杂度很高的树，可以使用GlobalKey做为子树widget的key。GlobalKey具有缓存功能</p>
+<p>注意：<br><code>element.child.widget == widget.build()</code>,不会触发子树的update，当触发update的时候，如果没有生效，要注意widget是否使用旧widget，没有new widget，导致update流程走到该widget就停止了<br>子树的深度变化，会引起子树重建，如果子树是一个复杂度很高的树，可以使用GlobalKey做为子树widget的key。GlobalKey具有缓存功能</p>
 </blockquote>
-<h3 id="如何触发树更新"><a href="#如何触发树更新" class="headerlink" title="如何触发树更新"></a>如何触发树更新</h3><p>全局更新：调用runApp(rootWidget)，一般flutter启动时调用后不再会调用<br>局部子树更新, 将该子树做StatefullWidget的一个子widget，并创建对应的State类实例，通过调用state.setState() 触发该子树的刷新</p>
+<h3 id="如何触发树更新"><a href="#如何触发树更新" class="headerlink" title="如何触发树更新"></a>如何触发树更新</h3><p>全局更新：调用<code>runApp(rootWidget)</code>，一般flutter启动时调用后不再会调用<br>局部子树更新, 将该子树做StatefullWidget的一个子widget，并创建对应的State类实例，通过调用state.setState() 触发该子树的刷新</p>
 <h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><p><img src="/2019/08/25/Flutter-UI-Develop/20191115_05.png" alt></p>
 <ul>
-<li>initState(): state create之后被insert到tree时调用的</li>
-<li>didUpdateWidget(newWidget):祖先节点rebuild widget时调用</li>
-<li>deactivate():widget被remove的时候调用，一个widget从tree中remove掉，可以在dispose接口被调用前，重新instert到一个新tree中</li>
-<li>didChangeDependencies():</li>
-<li>初始化时，在initState()之后立刻调用</li>
+<li><code>initState()</code>: state create之后被insert到tree时调用的</li>
+<li><code>didUpdateWidget(newWidget)</code>:祖先节点rebuild widget时调用</li>
+<li><code>deactivate()</code>:widget被remove的时候调用，一个widget从tree中remove掉，可以在dispose接口被调用前，重新instert到一个新tree中</li>
+<li><code>didChangeDependencies()</code>:</li>
+<li>初始化时，在<code>initState()</code>之后立刻调用</li>
 <li>当依赖的InheritedWidget rebuild,会触发此接口被调用</li>
-<li>build():</li>
+<li><code>build()</code>:</li>
 <li>After calling [initState].</li>
 <li>After calling [didUpdateWidget].</li>
 <li>After receiving a call to [setState].</li>
 <li>After a dependency of this [State] object changes (e.g., an[InheritedWidget] referenced by the previous [build] changes).</li>
 <li>After calling [deactivate] and then reinserting the [State] object into the tree at another location.</li>
-<li>dispose():Widget彻底销毁时调用</li>
-<li>reassemble(): hot reload调用</li>
+<li><code>dispose()</code>:Widget彻底销毁时调用</li>
+<li><code>reassemble()</code>: hot reload调用</li>
 </ul>
 <blockquote>
-<p>注意：<br>A页面push一个新的页面B,A页面的widget树中的所有state会依次调用deactivate(), didUpdateWidget(newWidget)、build()（这里怀疑是bug，A页面push一个新页面，理论上并没有将A页面进行remove操作），当然从功能上，没有看出来有什么异常<br>当ListView中的item滚动出可显示区域的时候，item会被从树中remove掉，此item子树中所有的state都会被dispose，state记录的数据都会销毁，item滚动回可显示区域时，会重新创建全新的state、element、renderobject<br>使用hot reload功能时，要特别注意state实例是没有重新创建的，如果该state中存在一下复杂的资源更新需要重新加载才能生效，那么需要在reassemble()添加处理，不然当你使用hot reload时候可能会出现一些意想不到的结果，例如，要将显示本地文件的内容到屏幕上，当你开发过程中，替换了文件中的内容，但是hot reload没有触发重新读取文件内容，页面显示还是原来的旧内容</p>
+<p>注意：<br>A页面push一个新的页面B,A页面的widget树中的所有state会依次调用<code>deactivate()</code>, <code>didUpdateWidget(newWidget)</code>、<code>build()</code>（这里怀疑是bug，A页面push一个新页面，理论上并没有将A页面进行remove操作），当然从功能上，没有看出来有什么异常<br>当ListView中的item滚动出可显示区域的时候，item会被从树中remove掉，此item子树中所有的state都会被dispose，state记录的数据都会销毁，item滚动回可显示区域时，会重新创建全新的state、element、renderobject<br>使用hot reload功能时，要特别注意state实例是没有重新创建的，如果该state中存在一下复杂的资源更新需要重新加载才能生效，那么需要在<code>reassemble()</code>添加处理，不然当你使用hot reload时候可能会出现一些意想不到的结果，例如，要将显示本地文件的内容到屏幕上，当你开发过程中，替换了文件中的内容，但是hot reload没有触发重新读取文件内容，页面显示还是原来的旧内容</p>
 </blockquote>
 <h2 id="数据流转"><a href="#数据流转" class="headerlink" title="数据流转"></a>数据流转</h2><h3 id="从上往下"><a href="#从上往下" class="headerlink" title="从上往下"></a>从上往下</h3><p>InheritedWidget用于子节点向祖先节点获取数据的机制</p>
 <figure class="highlight dart"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FrogColor</span> <span class="keyword">extends</span> <span class="title">InheritedWidget</span> </span>&#123;</span><br><span class="line">   <span class="keyword">const</span> FrogColor(&#123;</span><br><span class="line">     Key key,</span><br><span class="line">     <span class="meta">@required</span> <span class="keyword">this</span>.color,</span><br><span class="line">     <span class="meta">@required</span> Widget child,</span><br><span class="line">   &#125;) : <span class="keyword">assert</span>(color != <span class="keyword">null</span>),</span><br><span class="line">        <span class="keyword">assert</span>(child != <span class="keyword">null</span>),</span><br><span class="line">        <span class="keyword">super</span>(key: key, child: child);</span><br><span class="line"></span><br><span class="line">   <span class="keyword">final</span> Color color;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">static</span> FrogColor of(BuildContext context) &#123;</span><br><span class="line">     <span class="keyword">return</span> context.inheritFromWidgetOfExactType(FrogColor);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@override</span></span><br><span class="line">   <span class="built_in">bool</span> updateShouldNotify(FrogColor old) =&gt; color != old.color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -275,7 +275,7 @@
 <li>定义通知类，继承至Notification</li>
 <li>父节点使用NotificationListener 进行监听捕获通知</li>
 <li>子节点有数据变更调用下面接口进行数据上报</li>
-<li>Notification(data).dispatch(context)</li>
+<li><code>Notification(data).dispatch(context)</code></li>
 </ul>
 <p>流程如下：</p>
 <p><img src="/2019/08/25/Flutter-UI-Develop/20191115_06.png" alt></p>
@@ -285,7 +285,7 @@
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">parentUsesSize == false</span><br><span class="line">sizedByParent == true</span><br><span class="line">constraints.isTight</span><br></pre></td></tr></table></figure>
 
 <p>那么该renderObject设置为Relayout boundary，也就是该renderObject的重新layout不触发parent的layout，一般情况下开发人员不需要关心Relayout boundary，除非是使用CustomMultiChildLayout。</p>
-]]></content>
+<h2 id="本文完"><a href="#本文完" class="headerlink" title="本文完"></a>本文完</h2>]]></content>
       <categories>
         <category>技术</category>
       </categories>
