@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://joewsearch.com/"/>
-  <updated>2019-11-15T08:05:43.051Z</updated>
+  <updated>2019-11-15T08:46:33.548Z</updated>
   <id>http://joewsearch.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Flutter-UI-Develop</title>
+    <link href="http://joewsearch.com/2019/11/15/Flutter-UI-Develop/"/>
+    <id>http://joewsearch.com/2019/11/15/Flutter-UI-Develop/</id>
+    <published>2019-11-15T08:25:26.000Z</published>
+    <updated>2019-11-15T08:46:33.548Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="跨平台开发方案的三个时代"><a href="#跨平台开发方案的三个时代" class="headerlink" title="跨平台开发方案的三个时代"></a>跨平台开发方案的三个时代</h2><p>Web容器时代:基于Web相关技术通过浏览器组件来实现界面及功能，典型的框架包括 Cordova(PhoneGap)、Ionic和微信小程序。<br>缺点：一个完整H5页面的展示要经历浏 览器控件的加载、解析和渲染三大过程，性能消耗要比原生开发增加N个数量级，内存占用多、网页加载速度慢、渲染慢、JavaScript 执行慢、交互体验差等</p><a id="more"></a><p>泛Web容器时代:采用类Web标准进行开发，但在运行时把绘制和渲染交由原生系统接管的技术，代表框 架有React Native、Weex和快应用，广义的还包括天猫的Virtual View等。<br>缺点：需要处理大量平台相关的逻辑外，随着系统版本变化和API的变化，我们还需要处理不同平台的原生 控件渲染能力差异，修复各类奇奇怪怪的Bug。</p><p>自绘引擎时代:自带渲染引擎，客户端仅提供一块画布即可获得从业务逻辑到功能呈现的多端高度一致的 渲染体验。Flutter，是为数不多的代表。</p><p>下面是跨平台开发方案的对比：</p><table><thead><tr><th>开发方案</th><th>Web容器</th><th>RN</th><th>Weex</th><th>Flutter</th></tr></thead><tbody><tr><td>类型</td><td>Web容器</td><td>泛Web容器</td><td>泛Web容器</td><td>自绘引擎</td></tr><tr><td>支持平台</td><td>Android/iOS/Web</td><td>Android/iOS</td><td>Android/iOS、Web</td><td>Android/iOS</td></tr><tr><td></td><td></td><td></td><td></td><td></td></tr><tr><td>开发语言</td><td>Javascript</td><td>Javascript(React)</td><td>Javascript(Vue)</td><td>Dart</td></tr><tr><td>技术栈</td><td>前端</td><td>偏前端</td><td>偏前端</td><td>偏客户端</td></tr><tr><td>动态化能力</td><td>支持</td><td>支持</td><td>支持</td><td>不支持</td></tr><tr><td>渲染性能</td><td>差</td><td>一般</td><td>一般</td><td>好</td></tr><tr><td>滑动性能</td><td>差</td><td>一般</td><td>一般</td><td>好</td></tr><tr><td>页面级支持</td><td>支持</td><td>支持</td><td>支持</td><td>支持</td></tr><tr><td>区块级支持</td><td>不支持</td><td>支持</td><td>支持</td><td>支持</td></tr><tr><td>开发效率</td><td>高</td><td>一般</td><td>一般</td><td>一般</td></tr><tr><td>维护成本</td><td>低</td><td>一般</td><td>高</td><td>低</td></tr><tr><td>系统升级视频难度</td><td>低</td><td>中</td><td>中</td><td>低</td></tr><tr><td>社区生态</td><td>活跃</td><td>活跃</td><td>不活跃</td><td>活跃</td></tr></tbody></table><h2 id="Flutter框架介绍"><a href="#Flutter框架介绍" class="headerlink" title="Flutter框架介绍"></a>Flutter框架介绍</h2><p><img src="/2019/11/15/Flutter-UI-Develop/20191115_01.png" alt></p><p>Flutter架构采用分层设计，从下到上分为三层，依次为:Embedder、Engine、Framework。</p><p>Embedder是操作系统适配层，实现了渲染Surface设置，线程设置，以及平台插件等平台相关特性的适 配。从这里我们可以看到，Flutter平台相关特性并不多，这就使得从框架层面保持跨端一致性的成本相对 较低。</p><p>Engine层主要包含Skia、Dart和Text，实现了Flutter的渲染引擎、文字排版、事件处理和Dart运行时等功 能。Skia和Text为上层接口提供了调用底层渲染和排版的能力，Dart则为Flutter提供了运行时调用Dart和 渲染引擎的能力。而Engine层的作用，则是将它们组合起来，从它们生成的数据中实现视图渲染。</p><p>Framework层则是一个用Dart实现的UI SDK，包含了动画、图形绘制和手势识别等功能。为了在绘制控 件等固定样式的图形时提供更直观、更方便的接口，Flutter还基于这些基础能力，根据Material和 Cupertino两种视觉设计风格封装了一套UI组件库。我们在开发Flutter的时候，可以直接使用这些组件库。</p><h2 id="Flutter是怎么运转的"><a href="#Flutter是怎么运转的" class="headerlink" title="Flutter是怎么运转的?"></a>Flutter是怎么运转的?</h2><p>Flutter和其他跨平台方案的本质区别<br>与用于构建移动应用程序的其他大多数框架不同，Flutter是重写了一整套包括底层渲染逻辑和上层开发语言 的完整解决方案。这样不仅可以保证视图渲染在Android和iOS上的高度一致性(即高保真)，在代码执行 效率和渲染性能上也可以媲美原生App的体验(即高性能)。自己完成了组件渲染的闭环</p><p>React Native之类的框架，只是通过JavaScript虚拟机扩展调用系统组件，由Android和iOS系统进行组件 的渲染;</p><p>Flutter是怎么完成组件渲染的呢?这需要从图像显示的基本原理说起。</p><p>在计算机系统中，图像的显示需要CPU、GPU和显示器一起配合完成:CPU负责图像数据计算，GPU负责图 像数据渲染，而显示器则负责最终图像显示。</p><p>CPU把计算好的、需要显示的内容交给GPU，由GPU完成渲染后放入帧缓冲区，随后视频控制器根据垂直同 步信号(VSync)以每秒60次的速度，从帧缓冲区读取帧数据交由显示器完成图像显示。</p><p>操作系统在呈现图像时遵循了这种机制，而Flutter作为跨平台开发框架也采用了这种底层方案。</p><p><img src="/2019/11/15/Flutter-UI-Develop/20191115_02.png" alt></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;跨平台开发方案的三个时代&quot;&gt;&lt;a href=&quot;#跨平台开发方案的三个时代&quot; class=&quot;headerlink&quot; title=&quot;跨平台开发方案的三个时代&quot;&gt;&lt;/a&gt;跨平台开发方案的三个时代&lt;/h2&gt;&lt;p&gt;Web容器时代:基于Web相关技术通过浏览器组件来实现界面及功能，典型的框架包括 Cordova(PhoneGap)、Ionic和微信小程序。&lt;br&gt;缺点：一个完整H5页面的展示要经历浏 览器控件的加载、解析和渲染三大过程，性能消耗要比原生开发增加N个数量级，内存占用多、网页加载速度慢、渲染慢、JavaScript 执行慢、交互体验差等&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="技术" scheme="http://joewsearch.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="Flutter" scheme="http://joewsearch.com/tags/Flutter/"/>
+    
+  </entry>
   
   <entry>
     <title>超级签名详细实现</title>
