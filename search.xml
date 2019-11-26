@@ -40,10 +40,9 @@
 <p> 这样就完成了对 <code>mobileconfig</code> 的签名工作了</p>
 </li>
 </ol>
-<p><img src="/2019/11/14/%E8%B6%85%E7%BA%A7%E7%AD%BE%E5%90%8D%E8%AF%A6%E7%BB%86%E5%AE%9E%E7%8E%B0/20191114_03.PNG" alt></p>
-<ol start="3">
+<pre><code>![](20191114_03.png)</code></pre><ol start="3">
 <li><p>上图是中点击 “获取UDID” ，就会跳到设置 -&gt; 通用 -&gt; 描述文件 去安装已经签名的描述文件</p>
-<p> <img src="/2019/11/14/%E8%B6%85%E7%BA%A7%E7%AD%BE%E5%90%8D%E8%AF%A6%E7%BB%86%E5%AE%9E%E7%8E%B0/20191114_02.PNG" alt></p>
+<p> <img src="/2019/11/14/%E8%B6%85%E7%BA%A7%E7%AD%BE%E5%90%8D%E8%AF%A6%E7%BB%86%E5%AE%9E%E7%8E%B0/20191114_02.png" alt></p>
 <p> 如图显示已签名，说明第二步对 <code>.mobilecofig</code> 的签名是OK的，安装成功后，返回下载页面并调用<code>http://106.54.214.191:443/udid/receive</code>这个地址，服务器端就会收到UDID等信息</p>
 </li>
 </ol>
