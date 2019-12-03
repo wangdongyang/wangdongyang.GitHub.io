@@ -54,7 +54,7 @@
   <meta name="description" content="前言最近一直在研究iOS重签名的一些东西，也是对苹果超级签名机制的一次重新学习（之前只是了解），而在这之前先来过一遍加密解密数字签名等知识，下图是整个学习过程：密码学主要解决四个核心问题：机密性（隐私性）、完整性、身份验证、不可抵赖性，经典的密码学算法有对称加密算法 、公开密钥算法等，而每一个密码学算法是为了解决哪些问题，还有哪些不足，下面来逐个分析一下">
 <meta name="keywords" content="超级签名">
 <meta property="og:type" content="article">
-<meta property="og:title" content="加密解密">
+<meta property="og:title" content="iOS签名机制">
 <meta property="og:url" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;index.html">
 <meta property="og:site_name" content="那年星空">
 <meta property="og:description" content="前言最近一直在研究iOS重签名的一些东西，也是对苹果超级签名机制的一次重新学习（之前只是了解），而在这之前先来过一遍加密解密数字签名等知识，下图是整个学习过程：密码学主要解决四个核心问题：机密性（隐私性）、完整性、身份验证、不可抵赖性，经典的密码学算法有对称加密算法 、公开密钥算法等，而每一个密码学算法是为了解决哪些问题，还有哪些不足，下面来逐个分析一下">
@@ -66,7 +66,12 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_06.jpeg">
 <meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_07.jpeg">
 <meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_08.jpeg">
-<meta property="og:updated_time" content="2019-11-29T10:19:32.778Z">
+<meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_09.jpeg">
+<meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_10.jpg">
+<meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_11.jpeg">
+<meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_12.jpeg">
+<meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_02.png">
+<meta property="og:updated_time" content="2019-12-03T11:04:40.277Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_01.png">
 
@@ -84,7 +89,7 @@
   };
 </script>
 
-  <title>加密解密 | 那年星空</title>
+  <title>iOS签名机制 | 那年星空</title>
   
 
 
@@ -206,7 +211,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          加密解密
+          iOS签名机制
         </h1>
 
         <div class="post-meta">
@@ -223,7 +228,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-11-29 18:19:32" itemprop="dateModified" datetime="2019-11-29T18:19:32+08:00">2019-11-29</time>
+                <time title="修改时间：2019-12-03 19:04:40" itemprop="dateModified" datetime="2019-12-03T19:04:40+08:00">2019-12-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -370,7 +375,116 @@
 <p>到这里，混合加密系统是否完美无缺了呢？还是回到文章开头，我们还有两个问题没有解决：身份验证、不可抵赖性。</p>
 <p>A 、 B 、 C 三个人共享一个对称加密算法密钥， A 向 B 发送了一条消息，但是 A 可以抵赖说这条消息并不是他发送的，理由就是 C 也 有同样的密钥，这条力口密消息可能是 C 发送给 B 的，B 无法向第三方证明是 A 给他发送了消息。</p>
 <p>公开密钥算法中，如果算法用于加密解密，也同样不能防止抵赖，RSA 的公钥是完全公开的，RSA私钥拥有者虽然能够解密，但是并不能确认是哪个客户端发送的消息，任何人都可以抵赖。</p>
-<h2 id="问题三："><a href="#问题三：" class="headerlink" title="问题三："></a>问题三：</h2>
+<h2 id="问题三：如何确认对方的身份，防止抵赖呢？"><a href="#问题三：如何确认对方的身份，防止抵赖呢？" class="headerlink" title="问题三：如何确认对方的身份，防止抵赖呢？"></a>问题三：如何确认对方的身份，防止抵赖呢？</h2><h2 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h2><p>在RSA算法中，私钥只有密钥对的生成者持有，如果不考虑密钥泄露的问题，私钥拥有者使用密钥（注意不是加密操作）签署一条消息，然后发送给任意的接收方，接收方只要 拥有私钥对应的公钥，就能成功反解签署消息，由于只有私钥持有者才能”签署”消息，不能抵赖说这条签署消息不是他发送的，这就是数字签名技术。</p>
+<p>特点：</p>
+<ol>
+<li>防篡改：数据不会被修改。</li>
+<li>防伪造：发送的消息不能够伪造。</li>
+<li>防抵赖：消息签署者不能抵赖。</li>
+</ol>
+<p>前面两点，MAC 算法也具有，MAC 算法能保证传递的消息是经过验证的，但不能对消息发送者的身份进行验证，原因就在于消息发送方和接收方 拥有同样的密钥，所以双方可以抵赖。</p>
+<p>前面讲到的RSA加密，那么RSA加密和数字签名有什么区别呢？数字签名，其实就是将公钥密码反过来使用</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">私钥</th>
+<th align="center">公钥</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">公钥密码</td>
+<td align="center">接受者解密是使用</td>
+<td align="center">发送者加密时使用</td>
+</tr>
+<tr>
+<td align="center">数字签名</td>
+<td align="center">签名者生成签名时使用</td>
+<td align="center">验证者验证签名时使用</td>
+</tr>
+<tr>
+<td align="center">谁持有密钥</td>
+<td align="center">个人持有</td>
+<td align="center">任何人都可以持有</td>
+</tr>
+</tbody></table>
+<p>实现过程：</p>
+<p><img src="/2019/11/18/encrypt-and-decrypt/encrypt-and-decrypt_09.jpeg" alt></p>
+<p>签名生成:</p>
+<p>发送者Alice对消息计算摘要值。<br>发送者Alice用单向散列函数生成散列值，用自己的私钥对散列值（摘要值）进行签名得到签名值。<br>发送者Alice将原始消息和签名值一同发给接收者。</p>
+<p>签名验证:</p>
+<p>接收者Bob接收到消息后，拆分出消息和消息签名值 A。<br>接收者Bob使用单向散列函数对消息生成散列值 B。<br>接收者Bob对摘要值 B 和签名值 A 进行比较，如果相同表示签名验证成功，否则就是验证失败。</p>
+<blockquote>
+<p>注意：数字签名技术的本质不是为了加密，所以和签名值一同传递的消息是不用加密的，当然也可以对消息加密后 再计算签名值。<br>公开密钥算法运行比较缓慢，数字签名算法建议对消息摘要值进行签名，因为摘要值的长度是固定的，运算的时候速度会比较快。</p>
+</blockquote>
+<p>目前来讲，我们四个大问题都已经解决了，加密解密技术也一步一步走向成熟，混合加密系统解决了公钥密码加密速度慢、对称密码的密钥配送问题，数字签名可以做到防篡改、防伪造和防抵赖，好像一切都OK了。但是我们好像忽略一个地方，那就是不管是混合加密解密技术、RSA加密算法，还是数字签名技术，都需要传递一个公钥给对方，如果在传递公钥过程中被人做手脚了呢，换句话说，服务器传递给客户端的公钥可能被攻击者替换，安全性也就荡然无存了，这就是中间人攻击，攻击过程如图：</p>
+<p><img src="/2019/11/18/encrypt-and-decrypt/encrypt-and-decrypt_10.jpg" alt></p>
+<ul>
+<li>客户端向服务器端发起连接请求，期望获取服务器的RSA公钥，攻击者劫持了这个请求。</li>
+<li>攻击者自己生成一对 RSA 密钥对，然后将攻击者的 RSA 公钥发送给客户端。</li>
+<li>攻击者然后再向服务器端发送请求，服务器生成 RSA 密钥对，将 RSA 公钥发送给客户端，实际上是发送给攻击者。</li>
+<li>客户端通过攻击者的公钥加密密钥并发送给服务器，实际上是发送给攻击者。</li>
+<li>攻击者用自己的 RSA 私钥解密了密钥 A，然后自己生成一个密钥 B ，用服务器的 RSA 公钥加密后发送给服务器端。</li>
+<li>服务器端接收到请求后，用自己的 RSA 私钥解密出攻击者的密钥 B 。</li>
+<li>客户端使用攻击者的密钥块 A，采用对称加密算法（AES）加密数据并发送给服务器端，实际上是发送给攻击者。</li>
+<li>攻击者使用自己的密钥块A、采用 AES 算法解密出明文，客户端相当于泄露了隐私，攻击者使用密钥B ，采用 AES 算法加密明文后发送给服务器。</li>
+<li>服务器使用密钥块 B，采用 AES 算法加密数据并发送给攻击者。</li>
+<li>攻击者使用密钥块 B，采用 AES 算法解密出明文数据，此时客户端和服务器端的加密数据被成功破解。</li>
+</ul>
+<p>从上面可以看出，如果遭遇了中间人攻击，那么公钥将是伪造的，数字签名将失效。所以在验证签名之前，首先得先验证公钥的合法性</p>
+<h2 id="问题四：如何验证公钥的合法性？"><a href="#问题四：如何验证公钥的合法性？" class="headerlink" title="问题四：如何验证公钥的合法性？"></a>问题四：如何验证公钥的合法性？</h2><h2 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h2><p>证书，联想的是驾驶证、毕业证、英语四六级证等等，都是由权威机构认证的，密码学中的证书，全称叫公钥证书（Public-key Certificate，PKC），跟驾驶证类似里面有姓名、邮箱等个人信息，以及此人的公钥并由认证机构（Certificate Authority，CA）施加数字签名。</p>
+<p>CA就是能够认定“公钥确实属于此人”并能够生成数字签名的个人或者组织，有国际性组织、政府设立的组织，有通过提供认证服务来盈利的企业，个人也可以成立认证机构。</p>
+<p>认证过程如下：</p>
+<p>CA 机构也拥有一个密钥对，比如 RSA 密钥对（与服 务器 的 RSA 密钥对没有任何关系），它用私钥对证书进行数字签名 ，将签名的证书发送给服务器。浏览器再连接服务器，服务器发送证书给浏览器，浏览器拥有 CA 机构的公钥（内嵌在浏览器 中），然后校验证书的签名，一旦校验成功，就代表这个证书是可信的 CA 机构签发的。</p>
+<p>成功验证签名只能表示该证书是 CA 机构签发的，并不代表确认了身份，浏览器会继续校验，比如用户访问的网址是<a href="https://www.example.com" target="_blank" rel="noopener">https://www.example.com</a> 浏览器接收到服务器发送过来的证书，验证签名后，发现证书包含的域名也是 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> 代表校验身份成功， 最后浏览器从证书中获取服务器的公钥，用来进行密钥协商。</p>
+<p><img src="/2019/11/18/encrypt-and-decrypt/encrypt-and-decrypt_11.jpeg" alt></p>
+<ul>
+<li>服务器实体（ end entity ），就是需要申请证书的实体， 比如 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> 域名的拥有者可以申请一张证书，证书能够证明 <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a> 域名所有者的身份。</li>
+<li>浏览器充当证书校验方，方必须充分信任第三方 CA 机构，浏览器集成了各个 CA 机构的根证书。</li>
+<li>CA 机构，CA 是证书签发机构，在审核服务器实体的有效身份后，给其签发证书，证书是用 CA 机构的密钥对（比如 RSA 密钥对）对服务器实体证书进行签名。</li>
+<li>证书仓库，CA 机构签发的证书全部保存在仓库中，证书也可能过期或者被吊销，CA 机构吊销的证书称为证书吊销列表 CRL (Certificate Revocation List）。</li>
+<li>OCSP ( Online Certificate Status Protocol）在线证书状态协议，是为了获取证书的吊销状态，需要部署专门的服务，这些服务由 CA 机构提供，通过数字签名技术保护。其校验过程：浏览器负责发送 OCSP 请求，然后等待 OCSP 响应，最终完成证书吊销状态的检查。</li>
+</ul>
+<h2 id="iOS签名机制"><a href="#iOS签名机制" class="headerlink" title="iOS签名机制"></a>iOS签名机制</h2><p>前面讲了这么多，主要是一些加密、解密、数字签名和证书等基础知识，开始进入重点了哈</p>
+<p>iOS签名机制的作用就是保证安装到用户手机上的APP都是经过Apple官方允许的</p>
+<p>不管是真机调试，还是发布APP，开发者都需要经过一系列复杂的步骤</p>
+<ul>
+<li>生成CertificateSigningRequest.certSigningRequest文件</li>
+<li>获得ios_development.cer\ios_distribution.cer证书文件</li>
+<li>注册device、添加App ID</li>
+<li>获得*.mobileprovision文件</li>
+</ul>
+<p>当然，对于真机调试，现在的Xcode已经自动帮开发者做了以上操作，平时开发过程中也无需关心</p>
+<p>iOS 设备安装 APP有四种：</p>
+<ol>
+<li>App Store 上下载安装</li>
+<li>开发 App 时可以直接把开发中的应用安装进手机进行调试。</li>
+<li>In-House 企业内部分发，可以直接安装企业证书签名后的 APP。</li>
+<li>AD-Hoc 相当于企业分发的限制版，限制安装设备数量，较少用。</li>
+</ol>
+<p>先从简单的说起：App Store 上下载安装，其工作流程如下：<br>苹果官方生成一对公私钥，在 iOS 里内置一个公钥，私钥由苹果后台保存，我们传 App 上 AppStore 时，苹果后台用私钥对 APP 数据进行签名，iOS 系统下载这个 APP 后，用公钥验证这个签名，若签名正确，这个 APP 肯定是由苹果后台认证的，并且没有被修改过</p>
+<p><img src="/2019/11/18/encrypt-and-decrypt/encrypt-and-decrypt_12.jpeg" alt></p>
+<p>苹果要对其它三种方式安装的 App 的控制就没那么简单了，方案是使用了双层签名</p>
+<p><img src="/2019/11/18/encrypt-and-decrypt/encrypt-and-decrypt_02.png" alt></p>
+<p>过程用文字来描述：</p>
+<ol>
+<li>在你的 Mac 开发机器生成一对公私钥，</li>
+<li>苹果自己有固定的一对公私钥，跟上面 AppStore 例子一样，私钥在苹果后台，公钥在每个 iOS 设备上。</li>
+<li>把Mac公钥传到苹果后台，用苹果后台里的私钥去签名Mac公钥。得到一份数据包含了Mac公钥以及其签名，把这份数据称为证书。</li>
+<li>在苹果后台申请 AppID，配置好设备 ID 列表和 APP 可使用的权限，再加上第3步的证书，组成的数据用苹果私有签名，把数据和签名一起组成一个 Provisioning Profile 文件，下载到本地 Mac 开发机。</li>
+<li>在开发时，编译完一个 APP 后，用本地的对这个 APP 进行签名，同时把第4步得到的 Provisioning Profile 文件打包进 APP 里，文件名为 embedded.mobileprovision，把 APP 安装到手机上。</li>
+<li>在安装时，iOS 系统取得证书，通过系统内置的苹果公钥，去验证 embedded.mobileprovision 的数字签名是否正确，里面的证书签名也会再验一遍。</li>
+<li>确保了 embedded.mobileprovision 里的数据都是苹果授权以后，就可以取出里面的数据，做各种验证，包括用Mac公钥验证APP签名，验证设备 ID 是否在 ID 列表上，AppID 是否对应得上，权限开关是否跟 APP 里的 Entitlements 对应等。</li>
+</ol>
+<p>总结一下这些概念：</p>
+<ul>
+<li>证书：内容是公钥或私钥，由其他机构对其签名组成的数据包。</li>
+<li>Entitlements：包含了 App 权限开关列表。</li>
+<li>CertificateSigningRequest：本地公钥。</li>
+<li>p12：本地私钥，可以导入到其他电脑。</li>
+<li>Provisioning Profile：包含了 证书 / Entitlements 等数据，并由苹果后台私钥签名的数据包。</li>
+</ul>
+
     </div>
 
     
@@ -385,7 +499,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://joewsearch.com/2019/11/18/encrypt-and-decrypt/" title="加密解密">http://joewsearch.com/2019/11/18/encrypt-and-decrypt/</a>
+    <a href="http://joewsearch.com/2019/11/18/encrypt-and-decrypt/" title="iOS签名机制">http://joewsearch.com/2019/11/18/encrypt-and-decrypt/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/null" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -451,7 +565,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对称加密算法"><span class="nav-number">2.</span> <span class="nav-text">对称加密算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单向散列函数"><span class="nav-number">3.</span> <span class="nav-text">单向散列函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一：如何确保消息是正确的发送者发送的呢？"><span class="nav-number">4.</span> <span class="nav-text">问题一：如何确保消息是正确的发送者发送的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息验证码算法"><span class="nav-number">5.</span> <span class="nav-text">消息验证码算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二：怎样避免对称加密算法的缺陷呢？"><span class="nav-number">6.</span> <span class="nav-text">问题二：怎样避免对称加密算法的缺陷呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非对称加密算法"><span class="nav-number">7.</span> <span class="nav-text">非对称加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA-算法"><span class="nav-number">7.1.</span> <span class="nav-text">RSA 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#密钥文件生成过程"><span class="nav-number">7.1.1.</span> <span class="nav-text">密钥文件生成过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加密过程"><span class="nav-number">7.1.2.</span> <span class="nav-text">加密过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解密过程"><span class="nav-number">7.1.3.</span> <span class="nav-text">解密过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加密和解密互逆过程"><span class="nav-number">7.1.4.</span> <span class="nav-text">加密和解密互逆过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA算法-为什么比较安全？"><span class="nav-number">7.1.5.</span> <span class="nav-text">RSA算法 为什么比较安全？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#密钥协商算法"><span class="nav-number">7.2.</span> <span class="nav-text">密钥协商算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA-密钥协商算法工作原理"><span class="nav-number">7.2.1.</span> <span class="nav-text">RSA 密钥协商算法工作原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#混合加密系统"><span class="nav-number">8.</span> <span class="nav-text">混合加密系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题三："><span class="nav-number">9.</span> <span class="nav-text">问题三：</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对称加密算法"><span class="nav-number">2.</span> <span class="nav-text">对称加密算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单向散列函数"><span class="nav-number">3.</span> <span class="nav-text">单向散列函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题一：如何确保消息是正确的发送者发送的呢？"><span class="nav-number">4.</span> <span class="nav-text">问题一：如何确保消息是正确的发送者发送的呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#消息验证码算法"><span class="nav-number">5.</span> <span class="nav-text">消息验证码算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题二：怎样避免对称加密算法的缺陷呢？"><span class="nav-number">6.</span> <span class="nav-text">问题二：怎样避免对称加密算法的缺陷呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非对称加密算法"><span class="nav-number">7.</span> <span class="nav-text">非对称加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA-算法"><span class="nav-number">7.1.</span> <span class="nav-text">RSA 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#密钥文件生成过程"><span class="nav-number">7.1.1.</span> <span class="nav-text">密钥文件生成过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加密过程"><span class="nav-number">7.1.2.</span> <span class="nav-text">加密过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解密过程"><span class="nav-number">7.1.3.</span> <span class="nav-text">解密过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加密和解密互逆过程"><span class="nav-number">7.1.4.</span> <span class="nav-text">加密和解密互逆过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA算法-为什么比较安全？"><span class="nav-number">7.1.5.</span> <span class="nav-text">RSA算法 为什么比较安全？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#密钥协商算法"><span class="nav-number">7.2.</span> <span class="nav-text">密钥协商算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA-密钥协商算法工作原理"><span class="nav-number">7.2.1.</span> <span class="nav-text">RSA 密钥协商算法工作原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#混合加密系统"><span class="nav-number">8.</span> <span class="nav-text">混合加密系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题三：如何确认对方的身份，防止抵赖呢？"><span class="nav-number">9.</span> <span class="nav-text">问题三：如何确认对方的身份，防止抵赖呢？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数字签名"><span class="nav-number">10.</span> <span class="nav-text">数字签名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#问题四：如何验证公钥的合法性？"><span class="nav-number">11.</span> <span class="nav-text">问题四：如何验证公钥的合法性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#证书"><span class="nav-number">12.</span> <span class="nav-text">证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#iOS签名机制"><span class="nav-number">13.</span> <span class="nav-text">iOS签名机制</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
