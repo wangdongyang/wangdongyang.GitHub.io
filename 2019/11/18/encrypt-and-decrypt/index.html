@@ -71,7 +71,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_11.jpeg">
 <meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_12.jpeg">
 <meta property="og:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_02.png">
-<meta property="og:updated_time" content="2019-12-03T11:04:40.277Z">
+<meta property="og:updated_time" content="2019-12-04T08:05:03.148Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;joewsearch.com&#x2F;2019&#x2F;11&#x2F;18&#x2F;encrypt-and-decrypt&#x2F;encrypt-and-decrypt_01.png">
 
@@ -228,7 +228,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-12-03 19:04:40" itemprop="dateModified" datetime="2019-12-03T19:04:40+08:00">2019-12-03</time>
+                <time title="修改时间：2019-12-04 16:05:03" itemprop="dateModified" datetime="2019-12-04T16:05:03+08:00">2019-12-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -338,7 +338,7 @@
 <li>(e*d) mod n 等于 1。</li>
 <li>C^d (mod n）最终就能反解出 M。</li>
 </ul>
-<h4 id="RSA算法-为什么比较安全？"><a href="#RSA算法-为什么比较安全？" class="headerlink" title="RSA算法 为什么比较安全？"></a>RSA算法 为什么比较安全？</h4><p>幕运算的逆过程就是求对数问题，而模运算可以认为是离散问题，法就是离散对数模型，只要密钥长度足够长，离散对数很难破解。安全性和密钥对的长度有关，也就是和 n 这个值有关，它可以称为密钥长度，破解私钥有两个方法：</p>
+<h4 id="RSA算法-为什么比较安全？"><a href="#RSA算法-为什么比较安全？" class="headerlink" title="RSA算法 为什么比较安全？"></a>RSA算法 为什么比较安全？</h4><p>幕运算的逆过程就是求对数问题，而模运算可以认为是离散问题，RSA算法就是离散对数模型，只要密钥长度足够长，离散对数很难破解。安全性和密钥对的长度有关，也就是和 n 这个值有关，它可以称为密钥长度，破解私钥有两个方法：</p>
 <ul>
 <li>公钥持有人有 e 和 n，而要计算出私钥d，需要知道 p 和 q，想通过一个巨大的数字 n 获取 p 和 q 是一个因式分解问题，暴力破解很难。</li>
 <li>攻击者假如想通过密文和公钥破解私钥，就要求解决离散对数问题，更是难上加难。</li>
@@ -356,7 +356,7 @@
 <li>服务器端用它的私钥解密出会话密钥。</li>
 <li>至此双方完成连接，接下来服务器端和客户端可以使用对称加密算法和会话密钥加密解密数据。</li>
 </ul>
-<p>由于会话密钥长度相对很小，数据量不大，RSA加密也就快多了</p>
+<p>由于会话密钥长度相对很小，数据量不大，比RSA加密也就快多了</p>
 <h2 id="混合加密系统"><a href="#混合加密系统" class="headerlink" title="混合加密系统"></a>混合加密系统</h2><p>好了，我们已经知道 RSA 算法的基本知识和 RSA 密钥协商算法，现在来回答上面提出的问题三，怎样解决密钥配送问题呢？</p>
 <p><img src="/2019/11/18/encrypt-and-decrypt/encrypt-and-decrypt_08.jpeg" alt></p>
 <p>上图所示，是将对称密码和公钥密码的优势相结合，解决了公钥密码速度慢，通过公钥密码解决了对称密码的密钥配送问题，也称混合加密系统。会话密钥为本次通信随机生成的临时密钥，作为对称密码的密钥，用于加密消息，提高速度。</p>
@@ -446,7 +446,10 @@
 <li>OCSP ( Online Certificate Status Protocol）在线证书状态协议，是为了获取证书的吊销状态，需要部署专门的服务，这些服务由 CA 机构提供，通过数字签名技术保护。其校验过程：浏览器负责发送 OCSP 请求，然后等待 OCSP 响应，最终完成证书吊销状态的检查。</li>
 </ul>
 <h2 id="iOS签名机制"><a href="#iOS签名机制" class="headerlink" title="iOS签名机制"></a>iOS签名机制</h2><p>前面讲了这么多，主要是一些加密、解密、数字签名和证书等基础知识，开始进入重点了哈</p>
-<p>iOS签名机制的作用就是保证安装到用户手机上的APP都是经过Apple官方允许的</p>
+<p>iOS签名的作用</p>
+<p>iOS签名机制的作用就是保证安装到用户手机上的APP都是经过Apple官方允许的，首要任务是保证设备及系统的安全性，只有被苹果设备认可的证书签名的代码才能够被执行，否则在安装或者运行时会因为无法通过内核的签名校验而失败。iOS的系统中内置了来自苹果的CA证书，系统自身的代码都是被苹果”签名“过的， 而用户从AppStore下载的App也都已被苹果官方进行签名。签名机制可以有效地防止来自外部的攻击。</p>
+<p>限制app的行为，比如可读写的路径，允许访问的硬件，允许使用的服务等等，这些是沙盒(Sandbox)技术，通常所说的Entitlements(授权文件)，也就是指iOS沙盒的配置文件，这个文件中声明了app所需的权限，如果app中使用到了某项沙盒限制的功能，但没有声明对应的权限，可能运行到相关的代码时会直接Crash，当然提交审核的时候也是无法通过的。Entitlements也是强制签名的，如果Entitlements文件可以被任意修改，那么Sandbox也就失去了意义。对于越狱来说，如果无法绕过签名和Sandbox，再强大的提权漏洞也无计可施。</p>
+<p>签名还给苹果带来了一个巨大的好处：App分发的绝对控制权。公开发行App的合法途径有且只有一种，就是上传到苹果官方的AppStore供用户下载。苹果会对App进行严格的审查并签名，App的功能及支付渠道也因此可以受苹果的严格管制，也带了巨大的经济效益。</p>
 <p>不管是真机调试，还是发布APP，开发者都需要经过一系列复杂的步骤</p>
 <ul>
 <li>生成CertificateSigningRequest.certSigningRequest文件</li>
